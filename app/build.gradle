@@ -1,0 +1,99 @@
+buildscript {
+    project.ext {
+        build = [
+                versionCode: 1
+                , versionName: "0.1.0"
+        ]
+
+        versions = [
+                // plugins
+                androidToolsPlugin  : "2.0.0",
+                gradleVersions    : "0.12.0",
+
+                // sdk
+                compileSdk        : 23,
+                targetSdk         : 23,
+                minSdk            : 16,
+
+                // libs
+                buildTools        : "23.0.2",
+                supportV7         : "23.2.1",
+                rxandroid         : "1.1.0",
+                rxjava            : "1.1.3",
+                jackson           : "2.7.3",
+
+                // test
+                junit             : "4.12"
+        ]
+    }
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath group: "com.android.tools.build", name: "gradle", version: project.ext.versions.androidToolsPlugin
+        classpath group: "com.github.ben-manes", name:"gradle-versions-plugin", version: project.ext.versions.gradleVersions
+    }
+}
+
+apply plugin: "com.android.application"
+apply plugin: "com.github.ben-manes.versions"
+apply plugin: "idea"
+
+// android studio runs these tasks on gradle sync
+tasks.idea.dependsOn "generateDebugSources", "generateDebugAndroidTestSources"
+tasks.idea.mustRunAfter "generateDebugSources", "generateDebugAndroidTestSources"
+
+android {
+    compileSdkVersion project.ext.versions.compileSdk
+    buildToolsVersion project.ext.versions.buildTools
+
+    defaultConfig {
+        applicationId "net.bradbowie.alain"
+        versionCode project.ext.build.versionCode
+        versionName project.ext.build.versionName
+
+        minSdkVersion project.ext.versions.minSdk
+        targetSdkVersion project.ext.versions.targetSdk
+
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(releaseStoreFile)
+            storePassword releaseStorePassword
+            keyAlias releaseKeyAlias
+            keyPassword releaseKeyPassword
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
+        }
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    compile group: "com.android.support", name: "appcompat-v7", version: project.ext.versions.supportV7
+    compile group: "com.android.support", name: "design", version: project.ext.versions.supportV7
+    compile group: "com.android.support", name: "cardview-v7", version: project.ext.versions.supportV7
+    compile group: "io.reactivex", name: "rxjava", version: project.ext.versions.rxjava
+    compile group: "io.reactivex", name: "rxandroid", version: project.ext.versions.rxandroid
+    compile group: "com.fasterxml.jackson.core", name: "jackson-core", version: project.ext.versions.jackson
+    compile group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: project.ext.versions.jackson
+    compile group: "com.fasterxml.jackson.core", name: "jackson-databind", version: project.ext.versions.jackson
+
+    // test
+    testCompile group: "junit", name: "junit", version: project.ext.versions.junit
+}

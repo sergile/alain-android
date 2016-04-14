@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Alain</string>
+    <string name="action_clear_all">Clear All</string>
+    <string name="generator_default_header_text">We\'ll call it...</string>
+</resources>
