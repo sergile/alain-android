@@ -1,4 +1,4 @@
-<img src="http://github.com/brad-bowie/alain-android/img/alain.gif" />
+<img src="http://github.com/brad-bowie/alain-android/master/img/alain.gif" />
 
 <br />
 <br />
