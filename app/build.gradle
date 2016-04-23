@@ -1,8 +1,8 @@
 buildscript {
     project.ext {
         build = [
-                versionCode: 1
-                , versionName: "0.1.0"
+                versionCode: 1,
+                versionName: "0.1.0"
         ]
 
         versions = [
@@ -61,12 +61,7 @@ android {
     }
 
     signingConfigs {
-        release {
-            storeFile file(releaseStoreFile)
-            storePassword releaseStorePassword
-            keyAlias releaseKeyAlias
-            keyPassword releaseKeyPassword
-        }
+      // TODO
     }
 
     buildTypes {
@@ -75,12 +70,16 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            signingConfig signingConfigs.release
+            //signingConfig signingConfigs.release
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     dataBinding {
-        enabled = true
+        enabled true
     }
 }
 
