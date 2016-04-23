@@ -1,0 +1,27 @@
+# Validate this file's syntax against http://lint.travis-ci.org/
+
+language: android
+jdk: oraclejdk8
+sudo: false
+
+branches:
+  only:
+    - master
+
+env:
+  global:
+    # Some memory tweaks to hopefully make the build more stable
+    - GRADLE_OPTS="-Xmx512m -XX:MaxPermSize=512m"
+
+android:
+  components:
+    - extra-android-m2repository
+    - extra-google-m2repository
+
+    # Build Deps
+    - android-23
+    - tools
+    - build-tools-23.0.2
+
+script:
+  - ./gradlew build
