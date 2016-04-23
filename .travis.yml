@@ -24,4 +24,4 @@ android:
     - build-tools-23.0.2
 
 script:
-  - ./gradlew testDebugUnitTest
+  - ./gradlew build
