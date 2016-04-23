@@ -1,8 +1,8 @@
 buildscript {
     project.ext {
         build = [
-                versionCode: 1
-                , versionName: "0.1.0"
+                versionCode: 1,
+                versionName: "0.1.0"
         ]
 
         versions = [
@@ -60,18 +60,26 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    signingConfigs {
+      // TODO
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            signingConfig signingConfigs.release
+            //signingConfig signingConfigs.release
         }
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     dataBinding {
-        enabled = true
+        enabled true
     }
 }
 
