@@ -13,7 +13,6 @@ import java.util.Random;
  * Created by bradbowie on 4/11/16.
  */
 public class IdeaGenerator {
-
     private static final String TAG = LOG.tag(IdeaGenerator.class);
 
     private Random r = new Random();
