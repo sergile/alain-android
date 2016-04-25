@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/sergile/alain-android.svg?branch=master)](https://travis-ci.org/sergile/alain-android)
+[![Coverage Status](https://coveralls.io/repos/github/sergile/alain-android/badge.svg?branch=master)](https://coveralls.io/github/sergile/alain-android?branch=master)
 
 ----
 
