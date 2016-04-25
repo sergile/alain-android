@@ -8,7 +8,8 @@ buildscript {
         versions = [
                 // plugins
                 androidToolsPlugin  : "2.0.0",
-                gradleVersions    : "0.12.0",
+                gradleVersions      : "0.12.0",
+                coveralls           : "2.6.3",
 
                 // sdk
                 compileSdk        : 23,
@@ -33,13 +34,15 @@ buildscript {
 
     dependencies {
         classpath group: "com.android.tools.build", name: "gradle", version: project.ext.versions.androidToolsPlugin
-        classpath group: "com.github.ben-manes", name:"gradle-versions-plugin", version: project.ext.versions.gradleVersions
+        classpath group: "com.github.ben-manes", name: "gradle-versions-plugin", version: project.ext.versions.gradleVersions
+        classpath group: "org.kt3k.gradle.plugin", name: "coveralls-gradle-plugin", version: project.ext.versions.coveralls
     }
 }
 
 apply plugin: "com.android.application"
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: "idea"
+apply plugin: "com.github.kt3k.coveralls"
 
 // android studio runs these tasks on gradle sync
 tasks.idea.dependsOn "generateDebugSources", "generateDebugAndroidTestSources"
@@ -61,10 +64,14 @@ android {
     }
 
     signingConfigs {
-      // TODO
+        // TODO
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
+
         release {
             minifyEnabled false
             zipAlignEnabled true
