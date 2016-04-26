@@ -1,10 +1,11 @@
-def ciServer = 'TRAVIS'
+def ciServer = "TRAVIS"
 def executingOnCI = "true".equals(System.getenv(ciServer))
 
 logger.warn executingOnCI ? "CI server detected" : "CI server not detected"
 
 // TODO: extract other travis-related variables
 
-task ci (dependsOn: [':app:test', ':app:connectedCheck']) {
+task ci (dependsOn: [":app:test", ":app:connectedCheck", ":app:coveralls"]) {
+    group = "Continuous Integration"
     description "Run test suite for entire project"
 }
