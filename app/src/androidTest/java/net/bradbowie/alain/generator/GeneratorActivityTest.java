@@ -1,6 +1,5 @@
 package net.bradbowie.alain.generator;
 
-import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -8,7 +7,6 @@ import android.test.suitebuilder.annotation.LargeTest;
 
 import net.bradbowie.alain.R;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
