@@ -24,7 +24,10 @@ buildscript {
                 jackson            : "2.7.3",
 
                 // test
-                junit              : "4.12"
+                junit              : "4.12",
+                testAnnotations    : "23.2.1",
+                supportTest        : "0.5",
+                espresso           : "2.2.2"
         ]
     }
 
@@ -59,6 +62,8 @@ android {
 
         minSdkVersion project.ext.versions.minSdk
         targetSdkVersion project.ext.versions.targetSdk
+
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -102,6 +107,12 @@ dependencies {
 
     // test
     testCompile group: "junit", name: "junit", version: project.ext.versions.junit
+
+    // androidTest
+    androidTestCompile group: "com.android.support", name: "support-annotations", version: project.ext.versions.testAnnotations
+    androidTestCompile group: "com.android.support.test", name: "runner", version: project.ext.versions.supportTest
+    androidTestCompile group: "com.android.support.test", name: "rules", version: project.ext.versions.supportTest
+    androidTestCompile group: "com.android.support.test.espresso", name: "espresso-core", version: project.ext.versions.espresso
 }
 
 coveralls {

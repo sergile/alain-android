@@ -20,6 +20,36 @@ public class IdeaGeneratorTest {
     @Before
     public void init() {
         generator = new IdeaGenerator();
+    }
+
+    @Test
+    public void generateHelloWorld() {
+        generator.setColors(Arrays.asList(0, 1));
+
+        PartialIdea left = new PartialIdea();
+        left.setLeft(true);
+        left.setRight(false);
+        left.setWord("Hello");
+
+        PartialIdea right = new PartialIdea();
+        right.setLeft(false);
+        right.setRight(true);
+        right.setWord("World");
+
+        generator.setPartialIdeas(Arrays.asList(left, right));
+
+        Idea idea = generator.next();
+        Assert.assertNotNull(idea);
+        Assert.assertNotNull(idea.getLeft());
+        Assert.assertSame(left.getWord(), idea.getLeft());
+        Assert.assertNotNull(idea.getRight());
+        Assert.assertSame(right.getWord(), idea.getRight());
+        Assert.assertNotSame(idea.getLeft(), idea.getRight());
+        Assert.assertNotSame(idea.getLeftColor(), idea.getRightColor());
+    }
+
+    @Test
+    public void generateUniqueSample() {
         generator.setColors(Arrays.asList(0, 1));
 
         PartialIdea p1 = new PartialIdea();
@@ -33,10 +63,7 @@ public class IdeaGeneratorTest {
         p2.setWord("World");
 
         generator.setPartialIdeas(Arrays.asList(p1, p2));
-    }
 
-    @Test
-    public void generateUniqueSample() {
         for(int i = 0; i < 1000; i++) {
             Idea idea = generator.next();
             Assert.assertNotNull(idea);
