@@ -15,6 +15,8 @@ import net.bradbowie.alain.SimpleSubscriber;
 import net.bradbowie.alain.databinding.GeneratorActivityBinding;
 import net.bradbowie.alain.model.Idea;
 import net.bradbowie.alain.model.PartialIdea;
+import net.bradbowie.alain.tts.SystemTts;
+import net.bradbowie.alain.tts.TtsProvider;
 import net.bradbowie.alain.util.LOG;
 import net.bradbowie.alain.util.SerializationUtils;
 
@@ -34,11 +36,18 @@ public class GeneratorActivity extends AppCompatActivity {
     private static final String TAG = LOG.tag(GeneratorActivity.class);
 
     private static final String BUNDLE_GENERATED_IDEAS = "generated_ideas";
+    private static final String BUNDLE_TTS_ENABLED = "tts_enabled";
+
+    private static final long CONFIG_IDEA_INTERVAL = 4000;
+    private static final long CONFIG_IDEA_INTERVAL_INTIAL = 2500;
+    private static final long CONFIG_INTRO_DRAMATIC_PAUSE = 1000;
 
     private GeneratorActivityBinding binding;
     private IdeaListAdapter adapter;
     private Subscription generatorSub;
     private IdeaGenerator generator;
+    private TtsProvider tts;
+    private String ttsIntro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +111,15 @@ public class GeneratorActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        destroyTts();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelableArrayList(BUNDLE_GENERATED_IDEAS, adapter.getGreatestIdeasEver());
+        savedInstanceState.putBoolean(BUNDLE_TTS_ENABLED, tts != null);
 
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -112,6 +128,8 @@ public class GeneratorActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         List<Idea> previouslyGenerated = savedInstanceState.getParcelableArrayList(BUNDLE_GENERATED_IDEAS);
         adapter.addAllIdeas(previouslyGenerated);
+
+        if(savedInstanceState.getBoolean(BUNDLE_TTS_ENABLED)) initTts();
 
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -124,13 +142,40 @@ public class GeneratorActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_generator_enable_tts).setChecked(tts != null);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_clear_all:
+            case R.id.menu_generator_clear_all:
                 onClearGeneratedIdeas();
                 return true;
+            case R.id.menu_generator_enable_tts:
+                if(tts == null) {
+                    initTts();
+                    item.setChecked(true);
+                } else {
+                    destroyTts();
+                    item.setChecked(false);
+                }
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void initTts() {
+        ttsIntro = getString(R.string.generator_default_header_text);
+        tts = new SystemTts(this);
+    }
+
+    private void destroyTts() {
+        if(tts != null) {
+            tts.destroy();
+            tts = null;
         }
     }
 
@@ -148,7 +193,7 @@ public class GeneratorActivity extends AppCompatActivity {
             return;
         }
 
-        generatorSub = Observable.interval(5, TimeUnit.SECONDS)
+        generatorSub = Observable.interval(CONFIG_IDEA_INTERVAL_INTIAL, CONFIG_IDEA_INTERVAL, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(new Action0() {
@@ -166,7 +211,7 @@ public class GeneratorActivity extends AppCompatActivity {
                 .subscribe(new SimpleSubscriber<Long>() {
                     @Override
                     public void onNext(Long aLong) {
-                        adapter.addIdea(generator.next());
+                        onNextIdea(generator.next());
                     }
                 });
     }
@@ -175,12 +220,26 @@ public class GeneratorActivity extends AppCompatActivity {
         binding.generatorPauseButton.setVisibility(View.VISIBLE);
         binding.generatorPlayButton.setVisibility(View.GONE);
 
+        if(tts != null) tts.say(ttsIntro);
+
         adapter.setGenerating(true);
+    }
+
+    private void onNextIdea(Idea i) {
+        adapter.addIdea(i);
+
+        if(tts != null) {
+            tts.say(i.getLeft() + " " + i.getRight());
+            tts.dramaticPause(CONFIG_INTRO_DRAMATIC_PAUSE);
+            tts.say(ttsIntro);
+        }
     }
 
     public void onGeneratorStop() {
         if (generatorSub != null && !generatorSub.isUnsubscribed()) {
             generatorSub.unsubscribe();
+
+            if(tts != null) tts.stopSpeaking();
         }
     }
 
