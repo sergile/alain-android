@@ -168,8 +168,10 @@ public class GeneratorActivity extends AppCompatActivity {
     }
 
     private void initTts() {
-        ttsIntro = getString(R.string.generator_default_header_text);
-        tts = new SystemTts(this);
+        if(tts == null) {
+            ttsIntro = getString(R.string.generator_default_header_text);
+            tts = new SystemTts(this);
+        }
     }
 
     private void destroyTts() {
