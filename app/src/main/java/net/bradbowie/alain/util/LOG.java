@@ -35,6 +35,10 @@ public class LOG {
         Log.w(tag, message);
     }
 
+    public static void e(String tag, String message) {
+        LOG.e(tag, message);
+    }
+
     public static void e(String tag, String message, Throwable t) {
         Log.e(tag, message, t);
     }
